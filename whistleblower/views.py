@@ -99,12 +99,6 @@ def auth(request):
 @login_required
 @user_passes_test(is_admin_group)
 def files(request, order='date_oldest'):
-    # Don't need to call the amazon thing anymore, but have it here just in case -Karan
-    # s3 = boto3.resource('s3'
-    #
-    # bucket_name = 'whistleblowerapp'  # replace with your bucket name
-    #
-    # objects = [{'key': obj.key, 'last_modified': obj.last_modified} for obj in s3.Bucket(bucket_name).objects.all()]
     objects = None
 
     if order == 'date_oldest':
