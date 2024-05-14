@@ -100,9 +100,7 @@ def auth(request):
 @user_passes_test(is_admin_group)
 def files(request, order='date_oldest'):
     # Don't need to call the amazon thing anymore, but have it here just in case -Karan
-    # s3 = boto3.resource('s3',
-    #                     aws_access_key_id='AKIAZI2LCDZPIJ4I2TU6',
-    #                     aws_secret_access_key='YvrdWkz/TvsRUm0BLTcD4PFWp56IIfIgrfa3pG+b')
+    # s3 = boto3.resource('s3'
     #
     # bucket_name = 'whistleblowerapp'  # replace with your bucket name
     #
