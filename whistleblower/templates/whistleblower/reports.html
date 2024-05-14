@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {% extends "base.html" %} {% load socialaccount %} {% load widget_tweaks %}
+    {% load static %}
+    <script src="{% static 'htmx.min.js' %}" defer></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <title>Environ - A Whistleblower App</title>
+  </head>
+  {% block content %}
+  <body>
+    <div class="container">
+      <h1 class="display-6 mt-3">Public Reports</h1>
+
+
+        <div class="dropdown">
+          <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Sort By
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="/reports/date_newest/">Date (Newest)</a></li>
+            <li><a class="dropdown-item" href="/reports/date_oldest/">Date (Oldest)</a></li>
+          </ul>
+        </div>
+
+      <table
+        class="table table-hover table-responsive mt-4 table-bordered- border-success align-middle"
+      >
+        <thead class="table-success border-1">
+          <tr class="lead">
+            <th scope="col">Date
+
+            </th>
+            <th scope="col">File</th>
+            <th scope="col">Company</th>
+            <th scope="col">Reason</th>
+            <th scope="col">Explanation</th>
+          </tr>
+        </thead>
+
+        <tbody class="lead">
+          {% for obj in uploaded_files %}
+          <tr>
+            <td>
+              {{obj.date}}
+            </td>
+
+            <td>
+              {% with filename=obj.picture.name %}
+                  {% with 'https://whistleblowerapp.s3.us-east-2.amazonaws.com/'|add:filename as file_url %}
+                      {% with filename|slice:"-3:" as file_ext %}
+                          {% if file_ext == 'jpg' %}
+                              <img src="{{ file_url }}" alt="" width="200" />
+                          {% elif file_ext == 'pdf' %}
+                              <embed src="{{ file_url }}" type="application/pdf" width="300" height="200" />
+                          {% elif file_ext == 'txt' %}
+                              <iframe src="{{ file_url }}" width="200" height="150"></iframe>
+                          {% endif %}
+                      {% endwith %}
+                  {% endwith %}
+              {% endwith %}
+            </td>
+
+            <td>{{ obj.company }}</td>
+            <td>{{ obj.reason }}</td>
+            <td>{{ obj.explanation }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <br>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  {% endblock content %}
+</html>

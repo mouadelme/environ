@@ -1,0 +1,18 @@
+Citations:
+
+
+Co-pilot:
+https://copilot.microsoft.com/
+Used to debug when running into trouble and when learning new features of Django it gives a good explanation
+
+GetBootstrap.com:
+https://getbootstrap.com/docs/5.0/components/alerts/
+Used to understand bootstrap and all of its features
+
+SaaS Pegasus:
+https://www.saaspegasus.com/guides/modern-javascript-for-django-developers/htmx-alpine/
+Used to get a grasp of django and the javascript features to add to it
+
+MDN Webdocs:
+https://developer.mozilla.org/en-US/
+Used for general HTML, CSS info

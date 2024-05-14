@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <meta charset="UTF-8" />
+    {% extends "base.html" %} {% load socialaccount %} {% load widget_tweaks %}
+    {% load static %}
+    <script src="{% static 'htmx.min.js' %}" defer></script>
+
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <title>Environ - A Whistleblower App</title>
+  </head>
+  {% block content %}
+  <body>
+    <div class="container">
+
+      {% if file_name != '' %}
+
+      <h1 class="display-6 mt-3">Viewing: {{ file_name}}</h1>
+
+      {% else %}
+
+      <h1 class="display-6 mt-3">Viewing </h1>
+
+
+      {% endif %}
+
+      <h2 class="lead mt-2 fs-3">Submitted By: {{current_file.email}}</h2>
+      <h2 class="lead mt-2 fs-3">Date: {{current_file.date}}</h2>
+
+      <div class="row">
+
+        {% if file_name != '' %}
+
+          <div class="col">
+            {% if file_type == 'jpg' %}
+            <img src="{{ file_url }}" alt="" width="600" />
+            {% elif file_type == 'pdf' %}
+            <embed
+              src="{{ file_url }}"
+              type="application/pdf"
+              width="600"
+              height="500"
+            />
+            {% elif file_type == 'txt' %}
+            <iframe src="{{ file_url }}" width="300" height="250"></iframe>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+        <div class="col">
+          <h2 class="lead fs-3 fw-semibold">Company</h2>
+          {% if current_file.company == ''%}
+          <p class="lead">No company!</p>
+          {% else %}
+          <p class="lead">{{ current_file.company }}</p>
+
+          {% endif %}
+          <h2 class="lead fs-3 fw-semibold">Reason</h2>
+          {% if current_file.reason == ''%}
+          <p class="lead">No reason!</p>
+          {% else %}
+          <p class="lead">{{ current_file.reason }}</p>
+
+          {% endif %}
+
+          <h2 class="lead fs-3 fw-semibold">Current Explanation</h2>
+          {% if current_file.explanation %}
+          <p class="lead">{{current_file.explanation}}</p>
+          {% else %}
+          <p class="lead">No Current Explanation</p>
+
+          {% endif %}
+          <div class="container">
+            <a href="{% url 'files' %}" class="btn btn-primary my-2">Back to View Submissions</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-3">
+        <form
+          action="/file_view/{{ file_id }}/"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+
+          <label for="explanationText" class="form-label fs-4 lead fw-semibold">Write An Explanation</label>
+          <textarea
+            class="form-control"
+            id="explanationText"
+            name="explanation"
+            rows="3"
+          >{{ current_file.explanation }}
+          </textarea>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary my-3 mb-5">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  <!-- Modal for Success -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Submission Successful</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Your report has successfully been submitted!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if form_success %}
+    <script>
+    $(document).ready(function() {
+        $('#successModal').modal('show');
+    });
+    </script>
+  {% endif %}
+
+
+  </body>
+</html>
+
+{% endblock content %}

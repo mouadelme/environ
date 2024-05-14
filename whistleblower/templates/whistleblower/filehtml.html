@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+
+
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {% extends "base.html" %} {% load socialaccount %} {% load widget_tweaks %}
+    {% load static %}
+    <script src="{% static 'htmx.min.js' %}" defer></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <title>Environ - A Whistleblower App</title>
+  </head>
+  {% block content %}
+  <body>
+    <div class="container">
+      <div class="p-8 flex flex-col items-center">
+        <h1 class="display-6 mt-3">Submit Report</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="company" class="form-label">Company</label>
+            <input type="text" class="form-control" id="company" name="company" maxlength="50" onkeyup="textCounter(this,'counter',50);">
+            <input disabled="" class="bg-transparent border-0" maxlength="3" size="3" value="0/50" id="counter">
+          </div>
+          <script>
+        function textCounter(Field1,Field2,Limit)
+        {
+        count = document.getElementById(Field2);
+        if ( Field1.value.length > Limit ) {
+        Field1.value = Field1.value.substring( 0, Limit );
+        return false;
+        } else {
+          count.value = Field1.value.length + "/" + Limit;
+            }
+              }
+          </script>
+
+          <div class="mb-3">
+            <label for="image" class="form-label">Image<span class = "text-danger">*</span></label>
+            <input
+              type="file"
+              class="form-control"
+              id="picture"
+              name="picture"
+              aria-describedby="file_input_help"
+            />
+            <div id="file_input_help" class="form-text">
+              Upload an image related to the report.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="reason" class="form-label">Reason<span class = "text-danger">*</span></label>
+            <textarea
+              class="form-control"
+              id="reason"
+              name="reason"
+              rows="3"
+              maxlength="300"
+              onkeyup="textCounter(this,'counter2',300);"
+            ></textarea>
+             <input disabled="" class="bg-transparent border-0" maxlength="3" size="3" value="0/300" id="counter2">
+          </div>
+
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="public" name="public" />
+            <label class="form-check-label" for="public">Make Public</label>
+          </div>
+
+
+
+          <input type="submit" value="Submit" class="btn btn-primary" />
+           <p class="text-muted"><small><span class="text-danger">*</span> Either an image or a reason is required, but both cannot be left blank.</small></p>
+        </form>
+      </div>
+    </div>
+
+  <!-- Modal for if Fails Submission-->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="errorModalLabel">Submission Failed</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            The file you submitted is not supported. Please submit a .pdf, .jpg, or .txt file.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    {% if form_error %}
+      <script>
+      $(document).ready(function() {
+          $('#errorModal').modal('show');
+      });
+      </script>
+    {% endif %}
+
+
+  <!-- Modal for Success -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Submission Successful</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Your report has successfully been submitted!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if form_success %}
+    <script>
+    $(document).ready(function() {
+        $('#successModal').modal('show');
+    });
+    </script>
+  {% endif %}
+
+  <div class="modal fade" id="nosubModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="nosubModalLabel">Submission Failed</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+           Either an image or a reason is required.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if nosub_error %}
+    <script>
+    $(document).ready(function() {
+        $('#nosubModal').modal('show');
+    });
+    </script>
+  {% endif %}
+
+  </body>
+  {% endblock content %}
+</html>
